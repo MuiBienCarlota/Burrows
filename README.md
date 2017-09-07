@@ -1,4 +1,4 @@
-#Burrows
+# Burrows
 
 Burrows is a .Net service bus based on the popular MassTransit service bus.
 
@@ -10,11 +10,11 @@ Burrows is RabbitMQ only whereas MassTransit covers a variety of transports. Thi
 in order to focus exclusively on Rabbit. As a result, Burrows provides a more full featured implementation of Rabbit including better 
 support for publisher confirms while retaining the awesome polymorphic MassTransit routing setup.
 
-##How Do I Get Started?
+## How Do I Get Started?
 
 The first thing to know is how to set up a publisher and publish a message.
 
-###Set up the publisher:
+### Set up the publisher:
 The easiest way to set up a publisher is with the following command:
 
 	var publisher = new Publisher(sbc => sbc.Configure(@"rabbitmq://localhost/PublishConsole"));
@@ -27,7 +27,7 @@ It is synonymous with this command:
 
 There are many extensions available to customize bus behavior and they are all chainable.
 
-####What if I want to use Publisher Confirms?
+#### What if I want to use Publisher Confirms?
 Publisher confirms allow RabbitMQ publishers to ensure that messages got to the Rabbit broker.  Although it's an edge case, it is always possible that RabbitMQ may begin 
 nacking messages if the broker begins experiencing issues.  If a Nack is encountered, it's likely that some manual intervention will be required on the broker, making it
 important to handle this situation and prevent message loss.  In addition, there are situations such as simple network outages that may cause the publisher to lose 
@@ -38,7 +38,7 @@ Burrows includes some automatic mechanisms for offloading messages and then retr
 the messages on the file system and then attempt to retry them in roughly the same order they came in.  It is possible to implement other storage mechanisms as well,
 but the file system is the most basic and available should a network outage occur. 
 
-####Set up publisher Confirms:
+#### Set up publisher Confirms:
 
 	var publisher = new Publisher(
 		sbc => sbc.Configure(@"rabbitmq://localhost/PublishConsole"),
@@ -52,7 +52,7 @@ The call to UsePublisherConfirms accepts an argument which tells this publisher 
 Typically, this would be based on the name of the publisher.  The extension WithFileBackingStore tells the publisher to store messages on the file system at the root
 location specified.  The account the publisher runs under must have persmissions to write and create directories under this root location to organize messages.
 
-####So publisher confirms are set up...how do I republish failed messages?
+#### So publisher confirms are set up...how do I republish failed messages?
 If the publisher is still running, it will check at intervals to determine if Rabbit has again become available for publication and will start publishing again immediately.  However, if the publisher also goes down, how to I republish stored messages at startup?  Just call RepublishStoredMessages() on the publisher after instantiation.
 
 	var publisher = new Publisher(
@@ -60,7 +60,7 @@ If the publisher is still running, it will check at intervals to determine if Ra
        	ps => ps.UsePublisherConfirms("PublishConsole").WithFileBackingStore("C:\MessageBackup")); 
 	publisher.RepublishStoredMessages();
 
-###OK, I published something...how do I Consume it
+### OK, I published something...how do I Consume it
 I'll save the details of how Burrows and RabbitMQ deliver messages to a longer blog post, but Burrows is based on the fantastic work that was put into MassTransit to 
 allow polymorphic message consumption.  The first thing to do is set up a consumer service, typically using TopShelf to help.  Having done that, you will need to configure
 the service bus on the consumer to receive messages.  Consumer setup is almost always going to be used in coordination with an IOC Container, and Burrows currently supports
